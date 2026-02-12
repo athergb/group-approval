@@ -239,6 +239,24 @@
             white-space: normal;
             line-height: 1.2;
         }
+        .github-badge {
+            background: #24292e;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 15px;
+        }
+        .github-badge a {
+            color: white;
+            text-decoration: none;
+        }
+        .github-badge a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -250,9 +268,14 @@
             <img src="QFClogo.png" alt="QFC Logo" class="logo" onerror="this.style.display='none'">
             <h1>✈️ GROUP SEATS APPROVAL</h1>
         </div>
-        <span class="storage-badge">
-            💾 localStorage • persistent
-        </span>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="storage-badge">
+                💾 localStorage • persistent
+            </span>
+            <span class="github-badge" id="githubSyncStatus">
+                🔄 GitHub Sync Ready
+            </span>
+        </div>
     </div>
     
     <!-- USER SESSION INFO - Shows who is creating/editing -->
@@ -353,6 +376,9 @@
         <button class="btn" id="saveEntryBtn">💾 SAVE ENTRY</button>
         <button class="btn btn-outline" id="printSelectedBtn">🖨️ PRINT SELECTED</button>
         <button class="btn btn-outline" id="clearFormBtn">🗑️ CLEAR FORM</button>
+        <button class="btn btn-outline" id="syncFromGitHubBtn" style="background: #24292e; color: white; border-color: #24292e;">
+            🔄 SYNC FROM GITHUB
+        </button>
     </div>
 
     <!-- STORED ENTRIES TABLE WITH CHECKBOXES, EDIT, AND DELETE -->
@@ -376,7 +402,7 @@
                     <tr>
                         <th style="width: 25px;">✓</th>
                         <th>Sr</th>
-                        <th>Branch</th> <!-- NEW BRANCH COLUMN -->
+                        <th>Branch</th>
                         <th>Air</th>
                         <th>PNR</th>
                         <th>Size</th>
@@ -406,12 +432,16 @@
     (function() {
         "use strict";
 
+        // ========== CONFIGURATION - CHANGE THIS TO YOUR GITHUB RAW URL ==========
+        const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/athergb/group-approval/refs/heads/main/data.json';
+        // =========================================================================
+
         // ========== STORAGE ==========
         let storedEntries = [];
 
         // ========== DOM ELEMENTS ==========
         const srNoField = document.getElementById('srNo');
-        const branchSelect = document.getElementById('branch'); // NEW - Branch select
+        const branchSelect = document.getElementById('branch');
         const airlineSelect = document.getElementById('airline');
         const pnrInput = document.getElementById('pnr');
         const groupSizeInput = document.getElementById('groupSize');
@@ -431,9 +461,9 @@
         const entryCountSpan = document.getElementById('entryCount');
         const selectedCountSpan = document.getElementById('selectedCount');
         const currentUserNameSpan = document.getElementById('currentUserName');
+        const githubSyncStatus = document.getElementById('githubSyncStatus');
 
         // ========== SESSION USER (who is creating/editing) ==========
-        // Generate a consistent anonymous user ID for this session
         let sessionUserId = localStorage.getItem('qfc_session_user');
         if (!sessionUserId) {
             const randomNum = Math.floor(Math.random() * 1000);
@@ -485,6 +515,129 @@
             srNoField.value = getNextSrNo();
         }
 
+        // ========== MESSAGE DISPLAY ==========
+        function showMessage(text, type = 'info') {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = text;
+            msgDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+                color: white;
+                border-radius: 50px;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(msgDiv);
+            setTimeout(() => msgDiv.remove(), 5000);
+            
+            // Update GitHub sync status
+            if (githubSyncStatus) {
+                if (type === 'success') {
+                    githubSyncStatus.innerHTML = '✅ GitHub Synced';
+                    githubSyncStatus.style.background = '#28a745';
+                } else if (type === 'error') {
+                    githubSyncStatus.innerHTML = '⚠️ GitHub Sync Failed';
+                    githubSyncStatus.style.background = '#dc3545';
+                } else {
+                    githubSyncStatus.innerHTML = '🔄 GitHub Ready';
+                    githubSyncStatus.style.background = '#24292e';
+                }
+            }
+        }
+
+        // ========== LOAD FROM GITHUB ==========
+        async function loadFromGitHub() {
+            try {
+                showMessage('🔄 Loading shared data from GitHub...', 'info');
+                const response = await fetch(GITHUB_DATA_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.entries && data.entries.length > 0) {
+                    storedEntries = data.entries.map(entry => ({
+                        ...entry,
+                        selected: false,
+                        createdBy: entry.createdBy || 'GitHub Master',
+                        createdAt: entry.createdAt || new Date().toLocaleString(),
+                        editedBy: null,
+                        editedAt: null
+                    }));
+                    
+                    saveToStorage();
+                    renderTable();
+                    updateSrNoField();
+                    updateSelectedCount();
+                    showMessage(`✅ Loaded ${storedEntries.length} entries from GitHub master data`, 'success');
+                    return true;
+                }
+            } catch (error) {
+                console.error('GitHub load failed:', error);
+                showMessage('❌ Failed to load from GitHub. Using demo data.', 'error');
+            }
+            return false;
+        }
+
+        // ========== SYNC FROM GITHUB (MANUAL) ==========
+        async function syncFromGitHub() {
+            try {
+                showMessage('🔄 Syncing with GitHub...', 'info');
+                const response = await fetch(GITHUB_DATA_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.entries || data.entries.length === 0) {
+                    showMessage('ℹ️ No entries found in GitHub', 'info');
+                    return;
+                }
+                
+                // Create a map of existing entries by srNo
+                const existingMap = new Map(storedEntries.map(e => [e.srNo, e]));
+                let addedCount = 0;
+                let updatedCount = 0;
+                
+                data.entries.forEach(githubEntry => {
+                    if (!existingMap.has(githubEntry.srNo)) {
+                        // New entry - add it
+                        storedEntries.push({
+                            ...githubEntry,
+                            selected: false,
+                            createdBy: 'GitHub Sync',
+                            createdAt: new Date().toLocaleString(),
+                            editedBy: null,
+                            editedAt: null
+                        });
+                        addedCount++;
+                    }
+                });
+                
+                if (addedCount > 0) {
+                    saveToStorage();
+                    renderTable();
+                    updateSrNoField();
+                    updateSelectedCount();
+                    showMessage(`✅ Added ${addedCount} new entries from GitHub`, 'success');
+                } else {
+                    showMessage('ℹ️ Already up to date with GitHub', 'info');
+                }
+            } catch (error) {
+                console.error('GitHub sync failed:', error);
+                showMessage('❌ GitHub sync failed: ' + error.message, 'error');
+            }
+        }
+
         // ========== LOCALSTORAGE FUNCTIONS ==========
         function loadFromStorage() {
             const saved = localStorage.getItem('airlineEntries');
@@ -493,45 +646,18 @@
                 try {
                     storedEntries = JSON.parse(saved);
                     console.log(`✅ Loaded ${storedEntries.length} entries from localStorage`);
+                    renderTable();
+                    updateSrNoField();
+                    updateSelectedCount();
+                    return;
                 } catch(e) {
                     console.error('Failed to parse localStorage data', e);
                     storedEntries = [];
                 }
-            } 
-            
-            // If no data or empty array, create demo entry with audit info
-            if (!storedEntries || storedEntries.length === 0) {
-                storedEntries = [{
-                    srNo: 1,
-                    branch: 'HO', // NEW - Branch field in demo
-                    airline: 'EK',
-                    pnr: 'X7YZ9P',
-                    groupSize: 5,
-                    sector: 'DXB-LHR',
-                    obDate: '2025-06-12',
-                    ibDate: '2025-06-26',
-                    groupCode: 'G-EMI05',
-                    basicFare: 1450.00,
-                    taxes: 112.30,
-                    netPrice: 1562.30,
-                    percentage: 7.5,
-                    payment: 543.75,
-                    formDate: '2025-04-01',
-                    timeLimit: '2025-04-05 14:00',
-                    salesPerson: 'Mr. Asad Sharif',
-                    selected: false,
-                    createdBy: 'System',
-                    createdAt: new Date().toLocaleString(),
-                    editedBy: null,
-                    editedAt: null
-                }];
-                saveToStorage();
-                console.log('🆕 Created demo data with audit trail');
             }
             
-            renderTable();
-            updateSrNoField();
-            updateSelectedCount();
+            // If no data, try GitHub first
+            loadFromGitHub();
         }
 
         function saveToStorage() {
@@ -547,7 +673,7 @@
                 renderTable();
                 updateSrNoField();
                 saveToStorage();
-                alert(`Entry #${deletedSrNo} deleted.`);
+                showMessage(`Entry #${deletedSrNo} deleted.`, 'info');
             }
         };
 
@@ -558,10 +684,9 @@
 
             const now = new Date().toLocaleString();
             
-            // Base entry data
             const entry = {
                 srNo: editingIndex !== null ? storedEntries[editingIndex].srNo : getNextSrNo(),
-                branch: branchSelect.value, // NEW - Save branch
+                branch: branchSelect.value,
                 airline: airlineSelect.value,
                 pnr: pnrInput.value.trim(),
                 groupSize: parseInt(groupSizeInput.value, 10) || 0,
@@ -581,32 +706,28 @@
             };
 
             if (editingIndex !== null) {
-                // ========== EDIT EXISTING ==========
-                // Preserve creation info, add edit info
                 entry.createdBy = storedEntries[editingIndex].createdBy;
                 entry.createdAt = storedEntries[editingIndex].createdAt;
                 entry.editedBy = sessionUserId;
                 entry.editedAt = now;
                 
                 storedEntries[editingIndex] = entry;
-                alert(`Entry #${entry.srNo} updated by ${sessionUserId}.`);
+                showMessage(`Entry #${entry.srNo} updated by ${sessionUserId}.`, 'success');
                 editingIndex = null;
             } else {
-                // ========== NEW ENTRY ==========
                 entry.createdBy = sessionUserId;
                 entry.createdAt = now;
                 entry.editedBy = null;
                 entry.editedAt = null;
                 
                 storedEntries.push(entry);
-                alert(`Entry #${entry.srNo} created by ${sessionUserId}.`);
+                showMessage(`Entry #${entry.srNo} created by ${sessionUserId}.`, 'success');
             }
             
             renderTable();
             updateSrNoField();
             saveToStorage();
             
-            // Clear form fields (keep branch and airline defaults)
             pnrInput.value = '';
             groupCodeInput.value = '';
             sectorInput.value = 'JED-DXB';
@@ -618,11 +739,7 @@
             const e = storedEntries[index];
             if (!e) return;
             
-            // Load branch value - NEW
-            if (e.branch) {
-                branchSelect.value = e.branch;
-            }
-            
+            if (e.branch) branchSelect.value = e.branch;
             airlineSelect.value = e.airline;
             pnrInput.value = e.pnr;
             groupSizeInput.value = e.groupSize;
@@ -667,14 +784,13 @@
             if (selectedCountSpan) selectedCountSpan.textContent = `${count} selected`;
         }
 
-        // ========== RENDER TABLE with AUDIT and DELETE ==========
+        // ========== RENDER TABLE ==========
         function renderTable() {
             if (!tableBody) return;
             let html = '';
             storedEntries.forEach((e, idx) => {
                 const checked = e.selected ? 'checked' : '';
                 
-                // Format audit information
                 let auditText = `Created: ${e.createdBy || 'Unknown'}\n${e.createdAt || ''}`;
                 if (e.editedBy) {
                     auditText += `\n✏️ Edited: ${e.editedBy}\n${e.editedAt}`;
@@ -685,7 +801,7 @@
                         <input type="checkbox" class="select-checkbox" ${checked} onclick="toggleSelect(${idx})">
                     </td>
                     <td>${e.srNo}</td>
-                    <td><strong>${e.branch || 'HO'}</strong></td> <!-- NEW - Display branch -->
+                    <td><strong>${e.branch || 'HO'}</strong></td>
                     <td>${e.airline}</td>
                     <td>${e.pnr}</td>
                     <td>${e.groupSize}</td>
@@ -715,7 +831,7 @@
             if (entryCountSpan) entryCountSpan.textContent = `${storedEntries.length} entries`;
         }
 
-        // ========== CLEAR FORM (inputs only) ==========
+        // ========== CLEAR FORM ==========
         function clearForm() {
             pnrInput.value = '';
             groupSizeInput.value = '1';
@@ -729,14 +845,14 @@
             formDateInput.value = '2025-04-01';
             timeLimitInput.value = '2025-04-03 23:59';
             airlineSelect.value = 'SV';
-            branchSelect.value = 'HO'; // NEW - Reset branch to default
+            branchSelect.value = 'HO';
             salesPersonSelect.value = 'Mr. Muhammad Rafaqat';
             refreshCalculations();
             updateSrNoField();
             editingIndex = null;
         }
 
-        // ========== PRINT SELECTED ITINERARIES ==========
+        // ========== PRINT SELECTED ==========
         function printSelected() {
             const selectedEntries = storedEntries.filter(e => e.selected);
             
@@ -752,7 +868,7 @@
             selectedEntries.forEach(e => {
                 tableRows += `<tr style="border-bottom: 1px solid #ccc;">
                     <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.srNo}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.branch || 'HO'}</td> <!-- NEW - Branch in print -->
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.branch || 'HO'}</td>
                     <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.airline}</td>
                     <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.pnr}</td>
                     <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.groupSize}</td>
@@ -863,6 +979,12 @@
 
         document.getElementById('selectAllBtn').addEventListener('click', selectAll);
         document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
+        
+        // GitHub Sync Button
+        document.getElementById('syncFromGitHubBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            syncFromGitHub();
+        });
 
         // ========== INITIALIZE ==========
         loadFromStorage();
