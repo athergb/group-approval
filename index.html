@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QFC · Group Seats Approval · SHARED CLOUD</title>
+    <title>QFC · Group Seats Approval</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="QFClogo.png">
@@ -53,16 +53,6 @@
             margin: 0;
             color: #0b2f4e;
         }
-        .storage-badge {
-            font-size: 0.8rem;
-            background: #e6f3e6;
-            color: #1e5f1e;
-            padding: 6px 16px;
-            border-radius: 40px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
         .cloud-badge {
             font-size: 0.8rem;
             background: #24292e;
@@ -72,7 +62,6 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-left: 10px;
         }
         .user-session {
             background: #f0f4fa;
@@ -84,6 +73,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            margin: 20px 0;
         }
         .grid-form {
             display: grid;
@@ -160,14 +150,6 @@
             color: #1e476b;
             border: 2px solid #1e476b;
         }
-        .btn-success {
-            background: #28a745;
-            color: white;
-            border: none;
-        }
-        .btn-success:hover {
-            background: #218838;
-        }
         .btn-delete {
             background: #dc3545;
             color: white;
@@ -179,9 +161,6 @@
             cursor: pointer;
             margin-left: 5px;
         }
-        .btn-delete:hover {
-            background: #c82333;
-        }
         .entries-list {
             margin-top: 40px;
             background: #f1f6fa;
@@ -192,6 +171,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
         }
         .selection-bar {
             display: flex;
@@ -303,41 +283,33 @@
 </head>
 <body>
 <div class="form-container">
-    <!-- HEADER WITH LOGO -->
+    <!-- HEADER WITH LOGO - CLEAN, NO EXTRAS -->
     <div class="header-with-logo">
         <div class="logo-title">
             <img src="QFClogo.png" alt="QFC Logo" class="logo" onerror="this.style.display='none'">
-            <h1>✈️ GROUP SEATS APPROVAL · SHARED CLOUD</h1>
+            <h1>✈️ GROUP SEATS APPROVAL</h1>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <span class="storage-badge">
-                💾 localStorage
-            </span>
-            <span class="cloud-badge" id="cloudStatusBadge">
-                ☁️ JSONBin.io • Ready
-            </span>
-        </div>
-    </div>
-    
-    <!-- USER SESSION INFO -->
-    <div class="user-session">
-        <span>👤 Current User:</span>
-        <span id="currentUserName" style="font-weight: 700; color: #ff8c42;">Loading...</span>
-        <span id="cloudStatusText" style="margin-left: 10px; font-size: 0.8rem; color: #566b78;">
-            ☁️ Cloud: Ready
+        <span class="cloud-badge" id="cloudStatusBadge">
+            ☁️ Live • Shared Cloud
         </span>
     </div>
+    
+    <!-- USER SESSION INFO - SIMPLE -->
+    <div class="user-session">
+        <span>👤 You:</span>
+        <span id="currentUserName" style="font-weight: 700; color: #ff8c42;">Loading...</span>
+    </div>
 
-    <!-- CLOUD STATUS BAR -->
+    <!-- CLOUD STATUS - CLEAN -->
     <div class="status-bar">
         <div class="cloud-status">
             <span class="cloud-dot dot-green" id="cloudDot"></span>
             <span id="cloudMessage">✅ Connected • ALL USERS SEE SAME DATA</span>
         </div>
-        <span id="entryCountCloud" style="font-weight: 600;">0 entries in cloud</span>
+        <span id="entryCountCloud" style="font-weight: 600;">0 entries</span>
     </div>
     
-    <!-- FORM SECTION -->
+    <!-- FORM SECTION - UNCHANGED -->
     <div class="grid-form" id="pricingForm">
         <div class="input-field">
             <label>🔢 SR. NO (auto)</label>
@@ -398,12 +370,10 @@
             <label>📊 %AGE</label>
             <input type="number" id="percentage" value="5" step="0.1">
         </div>
-        
         <div class="payment-preview">
             <span style="font-size:1.2rem;">PAYMENT :</span>
             <span class="payment-amount" id="paymentDisplay">0.00</span>
         </div>
-
         <div class="input-field">
             <label>📆 DATE</label>
             <input type="date" id="formDate" value="2025-04-01">
@@ -423,9 +393,9 @@
         </div>
     </div>
 
+    <!-- ONLY 3 BUTTONS - CLEAN AND SIMPLE -->
     <div class="btn-group">
         <button class="btn" id="saveEntryBtn">💾 SAVE ENTRY</button>
-        <button class="btn btn-success" id="syncToCloudBtn">☁️ SYNC TO CLOUD (SHARE WITH ALL)</button>
         <button class="btn btn-outline" id="printSelectedBtn">🖨️ PRINT SELECTED</button>
         <button class="btn btn-outline" id="clearFormBtn">🗑️ CLEAR FORM</button>
     </div>
@@ -433,13 +403,13 @@
     <!-- STORED ENTRIES TABLE -->
     <div class="entries-list">
         <div class="entries-header">
-            <h3>📋 Stored itineraries (SHARED CLOUD - ALL USERS)</h3>
-            <span id="entryCount" class="storage-badge">0 entries</span>
+            <h3>📋 All Entries (Shared Cloud)</h3>
+            <span id="entryCount" style="background: #213b4f; color: white; padding: 6px 16px; border-radius: 40px;">0 entries</span>
         </div>
         
         <!-- Selection controls -->
         <div class="selection-bar">
-            <span style="font-weight: 600; color: #1e476b;">✅ SELECT ITEMS TO PRINT:</span>
+            <span style="font-weight: 600; color: #1e476b;">✅ SELECT TO PRINT:</span>
             <button id="selectAllBtn" class="select-all-btn">✔️ Select All</button>
             <button id="deselectAllBtn" class="select-all-btn" style="background: #6c8a9e;">✖️ Deselect All</button>
             <span id="selectedCount" style="font-weight: 600; margin-left: auto; background: white; padding: 5px 15px; border-radius: 30px;">0 selected</span>
@@ -450,25 +420,10 @@
                 <thead>
                     <tr>
                         <th style="width: 25px;">✓</th>
-                        <th>Sr</th>
-                        <th>Branch</th>
-                        <th>Air</th>
-                        <th>PNR</th>
-                        <th>Size</th>
-                        <th>Sector</th>
-                        <th>OB</th>
-                        <th>IB</th>
-                        <th>Code</th>
-                        <th>Fare</th>
-                        <th>Tax</th>
-                        <th>Net</th>
-                        <th>%</th>
-                        <th>Payment</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Sales</th>
-                        <th>Created/Edited By</th>
-                        <th>Actions</th>
+                        <th>Sr</th><th>Branch</th><th>Air</th><th>PNR</th><th>Size</th><th>Sector</th>
+                        <th>OB</th><th>IB</th><th>Code</th><th>Fare</th><th>Tax</th><th>Net</th>
+                        <th>%</th><th>Payment</th><th>Date</th><th>Time</th><th>Sales</th>
+                        <th>Created/Edited By</th><th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -482,15 +437,16 @@
         "use strict";
 
         // ============================================
-        // ✅ SIMPLE JSONBIN CONFIG - JUST BIN ID AND KEY
+        // ✅ YOUR JSONBIN CREDENTIALS - ALREADY CORRECT
         // ============================================
-        const BIN_ID = '698ddb44d0ea881f40b506e0';  // YOUR BIN ID - DO NOT CHANGE
-        const MASTER_KEY = '$2a$10$M7yt..FXT/XD1dNQfPzaBe3AW3sniIM0Z2Ru06yUBMg.Jo/xIbcC2'; // YOUR KEY
+        const BIN_ID = '698ddb44d0ea881f40b506e0';
+        const MASTER_KEY = '$2a$10$M7yt..FXT/XD1dNQfPzaBe3AW3sniIM0Z2Ru06yUBMg.Jo/xIbcC2';
         
         // ============================================
-        // STORAGE & STATE
+        // STATE
         // ============================================
         let storedEntries = [];
+        let editingIndex = null;
 
         // ============================================
         // DOM ELEMENTS
@@ -525,16 +481,10 @@
         // ============================================
         let sessionUserId = localStorage.getItem('qfc_session_user');
         if (!sessionUserId) {
-            const randomNum = Math.floor(Math.random() * 1000);
-            sessionUserId = `User-${randomNum}`;
+            sessionUserId = `User-${Math.floor(Math.random() * 1000)}`;
             localStorage.setItem('qfc_session_user', sessionUserId);
         }
         currentUserNameSpan.textContent = sessionUserId;
-
-        // ============================================
-        // EDIT TRACKING
-        // ============================================
-        let editingIndex = null;
 
         // ============================================
         // CALCULATIONS
@@ -581,7 +531,7 @@
         }
 
         // ============================================
-        // UTILITIES
+        // UI HELPERS
         // ============================================
         function showMessage(text, type = 'success') {
             const msgDiv = document.createElement('div');
@@ -589,75 +539,49 @@
             msgDiv.textContent = text;
             msgDiv.style.background = type === 'success' ? '#28a745' : '#dc3545';
             document.body.appendChild(msgDiv);
-            setTimeout(() => msgDiv.remove(), 5000);
+            setTimeout(() => msgDiv.remove(), 3000);
         }
 
         function updateCloudStatus(status, message) {
             if (cloudDot && cloudMessage) {
-                if (status === 'connected') {
-                    cloudDot.className = 'cloud-dot dot-green';
-                    cloudMessage.innerHTML = '✅ ' + message;
-                    document.getElementById('cloudStatusBadge').innerHTML = '☁️ JSONBin.io • Connected';
-                    document.getElementById('cloudStatusText').innerHTML = '☁️ Cloud: Live';
-                } else if (status === 'syncing') {
-                    cloudDot.className = 'cloud-dot dot-yellow';
-                    cloudMessage.innerHTML = '🔄 ' + message;
-                    document.getElementById('cloudStatusBadge').innerHTML = '☁️ JSONBin.io • Syncing...';
-                    document.getElementById('cloudStatusText').innerHTML = '☁️ Cloud: Syncing...';
-                } else {
-                    cloudDot.className = 'cloud-dot dot-red';
-                    cloudMessage.innerHTML = '❌ ' + message;
-                    document.getElementById('cloudStatusBadge').innerHTML = '☁️ JSONBin.io • Offline';
-                    document.getElementById('cloudStatusText').innerHTML = '☁️ Cloud: Offline';
-                }
+                cloudDot.className = `cloud-dot dot-${status === 'connected' ? 'green' : status === 'syncing' ? 'yellow' : 'red'}`;
+                cloudMessage.innerHTML = `${status === 'connected' ? '✅' : status === 'syncing' ? '🔄' : '❌'} ${message}`;
+                document.getElementById('cloudStatusBadge').innerHTML = `☁️ ${status === 'connected' ? 'Live' : status === 'syncing' ? 'Syncing...' : 'Offline'}`;
             }
         }
 
         // ============================================
-        // ✅ LOAD FROM SHARED CLOUD BIN
+        // ✅ CLOUD OPERATIONS - SIMPLE & RELIABLE
         // ============================================
+        
+        // Load from cloud
         async function loadFromCloud() {
             try {
-                updateCloudStatus('syncing', 'Loading shared data...');
-                
+                updateCloudStatus('syncing', 'Loading...');
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: {
-                        'X-Master-Key': MASTER_KEY
-                    }
+                    headers: { 'X-Master-Key': MASTER_KEY }
                 });
                 
                 if (response.ok) {
                     const data = await response.json();
-                    const cloudEntries = data.record || [];
-                    
-                    if (cloudEntries.length > 0) {
-                        storedEntries = cloudEntries;
-                        saveToStorage();
-                        renderTable();
-                        updateSelectedCount();
-                        entryCountCloud.textContent = `${storedEntries.length} entries in cloud`;
-                        updateCloudStatus('connected', 'Connected • ALL USERS SEE SAME DATA');
-                        return true;
-                    }
-                } else {
-                    console.error('Load failed:', response.status);
-                    updateCloudStatus('error', 'Failed to load from cloud');
-                    return false;
+                    storedEntries = data.record || [];
+                    saveToLocal();
+                    renderTable();
+                    updateCloudStatus('connected', 'All users see same data');
+                    entryCountCloud.textContent = `${storedEntries.length} entries`;
+                    return true;
                 }
             } catch (error) {
-                console.error('Load error:', error);
+                console.error('Load failed:', error);
                 updateCloudStatus('error', 'Connection failed');
-                return false;
             }
+            return false;
         }
 
-        // ============================================
-        // ✅ SAVE TO SHARED CLOUD BIN
-        // ============================================
+        // Save to cloud
         async function saveToCloud() {
-            updateCloudStatus('syncing', 'Sharing with all users...');
-            
             try {
+                updateCloudStatus('syncing', 'Saving...');
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
                     headers: {
@@ -668,44 +592,38 @@
                 });
                 
                 if (response.ok) {
-                    updateCloudStatus('connected', 'Connected • ALL USERS SEE SAME DATA');
-                    entryCountCloud.textContent = `${storedEntries.length} entries in cloud`;
-                    showMessage('✅ Shared with all users!', 'success');
+                    updateCloudStatus('connected', 'All users see same data');
+                    entryCountCloud.textContent = `${storedEntries.length} entries`;
                     return true;
-                } else {
-                    console.error('Save failed:', response.status);
-                    updateCloudStatus('error', 'Failed to share');
-                    showMessage('❌ Failed to share with cloud', 'error');
-                    return false;
                 }
             } catch (error) {
-                console.error('Save error:', error);
+                console.error('Save failed:', error);
                 updateCloudStatus('error', 'Connection failed');
-                showMessage('❌ Network error', 'error');
-                return false;
             }
+            return false;
         }
 
         // ============================================
-        // ✅ INITIALIZE - LOAD FROM CLOUD OR CREATE DEMO
+        // LOCAL STORAGE (BACKUP ONLY)
         // ============================================
-        async function initializeApp() {
-            // Try cloud first
-            const cloudLoaded = await loadFromCloud();
+        function saveToLocal() {
+            localStorage.setItem('qfc_backup', JSON.stringify(storedEntries));
+        }
+
+        // ============================================
+        // INITIALIZE - LOAD FROM CLOUD
+        // ============================================
+        async function initialize() {
+            const loaded = await loadFromCloud();
             
-            // If cloud fails, check localStorage
-            if (!cloudLoaded) {
-                const saved = localStorage.getItem('airlineEntries');
-                if (saved) {
-                    try {
-                        storedEntries = JSON.parse(saved);
-                        console.log('✅ Loaded from localStorage');
-                    } catch(e) {
-                        storedEntries = [];
-                    }
+            if (!loaded) {
+                // Try local backup
+                const backup = localStorage.getItem('qfc_backup');
+                if (backup) {
+                    storedEntries = JSON.parse(backup);
                 }
                 
-                // If still empty, create demo entry
+                // If still empty, create demo
                 if (storedEntries.length === 0) {
                     storedEntries = [{
                         srNo: 1,
@@ -731,11 +649,8 @@
                         editedBy: null,
                         editedAt: null
                     }];
-                    saveToStorage();
+                    await saveToCloud();
                 }
-                
-                // Try to save local data to cloud
-                await saveToCloud();
             }
             
             renderTable();
@@ -744,25 +659,11 @@
         }
 
         // ============================================
-        // LOCALSTORAGE
+        // ✅ SAVE ENTRY - NOW AUTO-SYNC TO CLOUD
         // ============================================
-        function saveToStorage() {
-            localStorage.setItem('airlineEntries', JSON.stringify(storedEntries));
-            console.log('💾 Saved to localStorage');
-        }
-
-        // ============================================
-        // ✅ SAVE ENTRY (FIXED - NOW WORKING!)
-        // ============================================
-        function saveEntry() {
-            if (!pnrInput.value.trim()) { 
-                alert('❌ PNR required'); 
-                return; 
-            }
-            if (!groupCodeInput.value.trim()) { 
-                alert('❌ Group Code required'); 
-                return; 
-            }
+        async function saveEntry() {
+            if (!pnrInput.value.trim()) { alert('PNR required'); return; }
+            if (!groupCodeInput.value.trim()) { alert('Group Code required'); return; }
 
             const now = new Date().toLocaleString();
             
@@ -793,48 +694,40 @@
                 entry.createdAt = storedEntries[editingIndex].createdAt;
                 entry.editedBy = sessionUserId;
                 entry.editedAt = now;
-                
                 storedEntries[editingIndex] = entry;
-                showMessage(`✅ Entry #${entry.srNo} updated by ${sessionUserId}`, 'success');
+                showMessage(`✅ Updated by ${sessionUserId}`);
                 editingIndex = null;
             } else {
                 // New entry
                 entry.createdBy = sessionUserId;
                 entry.createdAt = now;
-                entry.editedBy = null;
-                entry.editedAt = null;
-                
                 storedEntries.push(entry);
-                showMessage(`✅ Entry #${entry.srNo} created by ${sessionUserId}`, 'success');
+                showMessage(`✅ Created by ${sessionUserId}`);
             }
             
-            // Update UI and storage
             renderTable();
             updateSrNoField();
-            saveToStorage();
+            saveToLocal();
+            await saveToCloud(); // AUTO-SYNC - NO BUTTON NEEDED!
             
             // Clear form
             pnrInput.value = '';
             groupCodeInput.value = '';
             sectorInput.value = 'JED-DXB';
             refreshCalculations();
-            
-            // Auto-sync to cloud
-            saveToCloud();
         }
 
         // ============================================
         // DELETE ENTRY
         // ============================================
-        window.deleteEntry = function(index) {
-            if (confirm('⚠️ Delete this entry?')) {
-                const deletedSrNo = storedEntries[index].srNo;
+        window.deleteEntry = async function(index) {
+            if (confirm('Delete this entry?')) {
                 storedEntries.splice(index, 1);
                 renderTable();
                 updateSrNoField();
-                saveToStorage();
-                saveToCloud(); // Sync after delete
-                showMessage(`🗑️ Entry #${deletedSrNo} deleted`, 'info');
+                saveToLocal();
+                await saveToCloud(); // AUTO-SYNC
+                showMessage('🗑️ Deleted');
             }
         };
 
@@ -870,21 +763,19 @@
             storedEntries[index].selected = !storedEntries[index].selected;
             renderTable();
             updateSelectedCount();
-            saveToStorage();
+            saveToLocal();
         };
 
         function selectAll() {
             storedEntries.forEach(e => e.selected = true);
             renderTable();
             updateSelectedCount();
-            saveToStorage();
         }
 
         function deselectAll() {
             storedEntries.forEach(e => e.selected = false);
             renderTable();
             updateSelectedCount();
-            saveToStorage();
         }
 
         function updateSelectedCount() {
@@ -901,15 +792,8 @@
             storedEntries.forEach((e, idx) => {
                 const checked = e.selected ? 'checked' : '';
                 
-                let auditText = `Created: ${e.createdBy || 'Unknown'}\n${e.createdAt || ''}`;
-                if (e.editedBy) {
-                    auditText += `\n✏️ Edited: ${e.editedBy}\n${e.editedAt}`;
-                }
-                
                 html += `<tr>
-                    <td style="text-align: center;">
-                        <input type="checkbox" class="select-checkbox" ${checked} onclick="toggleSelect(${idx})">
-                    </td>
+                    <td><input type="checkbox" class="select-checkbox" ${checked} onclick="toggleSelect(${idx})"></td>
                     <td>${e.srNo}</td>
                     <td><strong>${e.branch || 'HO'}</strong></td>
                     <td>${e.airline}</td>
@@ -927,9 +811,9 @@
                     <td>${e.formDate}</td>
                     <td>${e.timeLimit}</td>
                     <td>${e.salesPerson}</td>
-                    <td class="audit-cell" title="${auditText.replace(/\n/g, ' • ')}">
+                    <td class="audit-cell">
                         ${e.editedBy ? '✏️ ' : '➕ '}${e.editedBy || e.createdBy || '—'}<br>
-                        <span style="font-size: 0.65rem; color: #6c8a9e;">${e.editedAt ? 'Updated' : 'Created'}: ${(e.editedAt || e.createdAt || '').slice(0,10)}</span>
+                        <span style="font-size: 0.65rem;">${(e.editedAt || e.createdAt || '').slice(0,10)}</span>
                     </td>
                     <td>
                         <button class="edit-btn" onclick="editEntry(${idx})">✏️ Edit</button>
@@ -938,8 +822,8 @@
                 </tr>`;
             });
             tableBody.innerHTML = html;
-            if (entryCountSpan) entryCountSpan.textContent = `${storedEntries.length} entries`;
-            entryCountCloud.textContent = `${storedEntries.length} entries in cloud`;
+            entryCountSpan.textContent = `${storedEntries.length} entries`;
+            entryCountCloud.textContent = `${storedEntries.length} entries`;
         }
 
         // ============================================
@@ -966,11 +850,10 @@
         }
 
         // ============================================
-        // PRINT SELECTED (YOUR EXISTING CODE - UNCHANGED)
+        // PRINT SELECTED
         // ============================================
         function printSelected() {
             const selectedEntries = storedEntries.filter(e => e.selected);
-            
             if (selectedEntries.length === 0) {
                 alert('Please select at least one itinerary to print.');
                 return;
@@ -981,122 +864,71 @@
 
             let tableRows = '';
             selectedEntries.forEach(e => {
-                tableRows += `<tr style="border-bottom: 1px solid #ccc;">
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.srNo}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.branch || 'HO'}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.airline}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.pnr}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.groupSize}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.sector}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.obDate}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.ibDate}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.groupCode}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.basicFare.toFixed(2)}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.taxes.toFixed(2)}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.netPrice.toFixed(2)}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.percentage}%</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.payment.toFixed(2)}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.formDate}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.timeLimit}</td>
-                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.salesPerson}</td>
+                tableRows += `<tr>
+                    <td>${e.srNo}</td><td>${e.branch || 'HO'}</td><td>${e.airline}</td>
+                    <td>${e.pnr}</td><td>${e.groupSize}</td><td>${e.sector}</td>
+                    <td>${e.obDate}</td><td>${e.ibDate}</td><td>${e.groupCode}</td>
+                    <td>${e.basicFare.toFixed(2)}</td><td>${e.taxes.toFixed(2)}</td>
+                    <td>${e.netPrice.toFixed(2)}</td><td>${e.percentage}%</td>
+                    <td>${e.payment.toFixed(2)}</td><td>${e.formDate}</td>
+                    <td>${e.timeLimit}</td><td>${e.salesPerson}</td>
                 </tr>`;
             });
 
-            const printHTML = `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>QFC - Selected Itineraries</title>
-    <link rel="icon" type="image/png" href="QFClogo.png">
-    <style>
-        @page { size: landscape; margin: 0.5in; }
-        * { font-family: Arial, sans-serif; }
-        body { padding: 20px; margin: 0; background: white; }
-        .logo-header { display: flex; align-items: center; gap: 15px; border-bottom: 4px solid #ff8c42; padding-bottom: 10px; }
-        h1 { color: #0b2f4e; margin: 0; font-size: 24px; }
-        table { width: 100%; border-collapse: collapse; font-size: 9px; }
-        th { background: #213b4f; color: white; padding: 6px 3px; }
-        td { padding: 5px 3px; border-bottom: 1px solid #ddd; text-align: center; }
-        .signature-panel { display: flex; justify-content: space-between; margin-top: 40px; background: #f9f5ec; padding: 25px 30px; border-radius: 20px; flex-wrap: wrap; }
-        .signature-name { font-size: 18px; font-weight: 700; border-bottom: 2px solid #c49a6c; }
-    </style>
-</head>
-<body>
-    <div class="logo-header">
-        <img src="QFClogo.png" width="50" height="50" onerror="this.style.display='none'">
-        <h1>✈️ GROUP SEATS APPROVAL · SHARED CLOUD</h1>
-    </div>
-    <div style="background: #ebf2fa; padding: 15px; border-radius: 10px; margin: 15px 0;">
-        <h3>📋 SELECTED ITINERARIES (${selectedEntries.length})</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sr</th><th>Branch</th><th>Air</th><th>PNR</th><th>Size</th><th>Sector</th>
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html><head><title>Selected Itineraries</title>
+                <style>
+                    @page { size: landscape; margin: 0.5in; }
+                    table { border-collapse: collapse; width: 100%; font-size: 10px; }
+                    th { background: #213b4f; color: white; padding: 6px; }
+                    td { padding: 4px; border-bottom: 1px solid #ddd; text-align: center; }
+                    .signature-panel { display: flex; justify-content: space-between; margin-top: 40px; padding: 20px; background: #f9f5ec; }
+                </style>
+                </head><body>
+                <h2>✈️ GROUP SEATS APPROVAL</h2>
+                <h3>Selected Itineraries (${selectedEntries.length})</h3>
+                <table>
+                    <thead><tr><th>Sr</th><th>Branch</th><th>Air</th><th>PNR</th><th>Size</th><th>Sector</th>
                     <th>OB</th><th>IB</th><th>Code</th><th>Fare</th><th>Tax</th><th>Net</th>
-                    <th>%</th><th>Payment</th><th>Date</th><th>TimeLim</th><th>Sales</th>
-                </tr>
-            </thead>
-            <tbody>${tableRows}</tbody>
-        </table>
-    </div>
-    <div class="signature-panel">
-        <div><div style="font-size:10px; color:#566b78;">Initiate by</div><div class="signature-name">${initiateName}</div><div style="font-size:11px;">Originator</div></div>
-        <div><div style="font-size:10px; color:#566b78;">Review By</div><div class="signature-name">Mr. Muhammad Rafaqat</div><div style="font-size:11px;">CCO</div></div>
-        <div><div style="font-size:10px; color:#566b78;">Approved by</div><div class="signature-name">Mr. Muhammad Tariq</div><div style="font-size:11px;">COO</div></div>
-        <div><div style="font-size:10px; color:#566b78;">Approved by</div><div class="signature-name">Mr. Mudassir Hussain Malik</div><div style="font-size:11px;">CEO</div></div>
-    </div>
-    <div style="margin-top: 30px; text-align: right;">✅ Generated: ${new Date().toLocaleString()}</div>
-</body>
-</html>`;
-
-            const printWindow = window.open('', '_blank', 'width=1300,height=900');
-            if (!printWindow) { alert('Please allow pop-ups to print.'); return; }
-            printWindow.document.write(printHTML);
+                    <th>%</th><th>Payment</th><th>Date</th><th>Time</th><th>Sales</th></tr></thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+                <div class="signature-panel">
+                    <div><strong>Initiate by</strong><br>${initiateName}</div>
+                    <div><strong>Review By</strong><br>Mr. Muhammad Rafaqat<br>CCO</div>
+                    <div><strong>Approved by</strong><br>Mr. Muhammad Tariq<br>COO</div>
+                    <div><strong>Approved by</strong><br>Mr. Mudassir Hussain Malik<br>CEO</div>
+                </div>
+                <p style="text-align: right;">Generated: ${new Date().toLocaleString()}</p>
+                </body></html>
+            `);
             printWindow.document.close();
-            printWindow.onload = function() { 
-                printWindow.print();
-                printWindow.onafterprint = function() { printWindow.close(); };
-            };
+            printWindow.print();
         }
 
         // ============================================
         // AUTO-REFRESH EVERY 10 SECONDS
         // ============================================
         setInterval(async () => {
-            console.log('🔄 Auto-refreshing from cloud...');
             await loadFromCloud();
+            renderTable();
+            updateSelectedCount();
         }, 10000);
 
         // ============================================
         // EVENT LISTENERS
         // ============================================
-        document.getElementById('saveEntryBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            saveEntry();
-        });
-
-        document.getElementById('syncToCloudBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            saveToCloud();
-        });
-
-        document.getElementById('printSelectedBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            printSelected();
-        });
-
-        document.getElementById('clearFormBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            clearForm();
-        });
-
+        document.getElementById('saveEntryBtn').addEventListener('click', (e) => { e.preventDefault(); saveEntry(); });
+        document.getElementById('printSelectedBtn').addEventListener('click', (e) => { e.preventDefault(); printSelected(); });
+        document.getElementById('clearFormBtn').addEventListener('click', (e) => { e.preventDefault(); clearForm(); });
         document.getElementById('selectAllBtn').addEventListener('click', selectAll);
         document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
 
         // ============================================
-        // ✅ START THE APP
+        // START
         // ============================================
-        initializeApp();
+        initialize();
         updateSrNoField();
     })();
 </script>
