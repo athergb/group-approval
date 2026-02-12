@@ -1,0 +1,26 @@
+{
+  "entries": [
+    {
+      "srNo": 1,
+      "branch": "HO",
+      "airline": "EK",
+      "pnr": "X7YZ9P",
+      "groupSize": 5,
+      "sector": "DXB-LHR",
+      "obDate": "2025-06-12",
+      "ibDate": "2025-06-26",
+      "groupCode": "G-EMI05",
+      "basicFare": 1450.00,
+      "taxes": 112.30,
+      "netPrice": 1562.30,
+      "percentage": 7.5,
+      "payment": 543.75,
+      "formDate": "2025-04-01",
+      "timeLimit": "2025-04-05 14:00",
+      "salesPerson": "Mr. Asad Sharif",
+      "selected": false,
+      "createdBy": "Shared Master",
+      "createdAt": "2025-01-01 00:00:00"
+    }
+  ]
+}
