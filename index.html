@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Pricing · QFC Approval System</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="QFClogo.png">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #f8fafc 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container {
+            max-width: 1600px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -10px rgba(0,20,40,0.15);
+            padding: 30px 35px;
+        }
+        .header-with-logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 4px solid #ff8c42;
+            padding-bottom: 18px;
+            margin-bottom: 8px;
+        }
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            width: 60px;
+            height: auto;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin: 0;
+            color: #0b2f4e;
+        }
+        .storage-badge {
+            font-size: 0.8rem;
+            background: #e6f3e6;
+            color: #1e5f1e;
+            padding: 6px 16px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .user-session {
+            background: #f0f4fa;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e476b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 22px 28px;
+            margin: 30px 0 25px;
+        }
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .input-field label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #2a4d69;
+            border-left: 4px solid #ffb347;
+            padding-left: 10px;
+        }
+        .input-field input, 
+        .input-field select {
+            padding: 12px 16px;
+            border: 1.5px solid #dbe4ee;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            background: white;
+            width: 100%;
+            font-weight: 500;
+        }
+        .payment-preview {
+            background: #f2e9d0;
+            border-radius: 20px;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            grid-column: span 2;
+            font-weight: 600;
+            border: 2px dashed #7c9eb3;
+        }
+        .payment-amount {
+            font-size: 1.7rem;
+            color: #1d5e8f;
+            background: white;
+            padding: 6px 24px;
+            border-radius: 40px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            border: none;
+            background: #1e476b;
+            color: white;
+            font-weight: 600;
+            padding: 14px 30px;
+            border-radius: 40px;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #ff8c42;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #1e476b;
+            border: 2px solid #1e476b;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        .entries-list {
+            margin-top: 40px;
+            background: #f1f6fa;
+            border-radius: 28px;
+            padding: 20px;
+        }
+        .entries-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .selection-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background: #e1eef9;
+            border-radius: 40px;
+            flex-wrap: wrap;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            font-size: 0.7rem;
+        }
+        th {
+            background: #213b4f;
+            color: white;
+            font-weight: 500;
+            padding: 10px 3px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        td {
+            padding: 10px 3px;
+            border-bottom: 1px solid #d2e0e9;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .edit-btn {
+            background: #ffb347;
+            color: #1e3b4a;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        .select-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #1e476b;
+        }
+        .select-all-btn {
+            background: #3a6b8c;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .audit-cell {
+            font-size: 0.65rem;
+            color: #4a6a7c;
+            max-width: 130px;
+            white-space: normal;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <!-- HEADER WITH LOGO (TOP LEFT CORNER) -->
+    <div class="header-with-logo">
+        <div class="logo-title">
+            <!-- QFC Logo - place QFClogo.png in same folder -->
+            <img src="QFClogo.png" alt="QFC Logo" class="logo" onerror="this.style.display='none'">
+            <h1>✈️ GROUP SEATS APPROVAL</h1>
+        </div>
+        <span class="storage-badge">
+            💾 localStorage • persistent
+        </span>
+    </div>
+    
+    <!-- USER SESSION INFO - Shows who is creating/editing -->
+    <div class="user-session">
+        <span>👤 Current User:</span>
+        <span id="currentUserName" style="font-weight: 700; color: #ff8c42;">Loading...</span>
+        <span style="margin-left: 10px; font-size: 0.8rem; color: #566b78;">(actions are tracked)</span>
+    </div>
+    
+    <!-- FORM SECTION -->
+    <div class="grid-form" id="pricingForm">
+        <div class="input-field">
+            <label>🔢 SR. NO (auto)</label>
+            <input type="text" id="srNo" readonly value="1">
+        </div>
+        <div class="input-field">
+            <label>🏢 BRANCH</label>
+            <select id="branch">
+                <option value="HO">HO</option>
+                <option value="LHE">LHE</option>
+                <option value="SKT">SKT</option>
+            </select>           
+        </div>
+        <div class="input-field">
+            <label>✈️ AIRLINE</label>
+            <select id="airline">
+                <option value="SV">SV</option><option value="PF">PF</option><option value="EK">EK</option>
+                <option value="PA">PA</option><option value="G9">G9</option><option value="9P">9P</option><option value="J9">J9</option>
+            </select>
+        </div>
+        <div class="input-field">
+            <label>🆔 PNR</label>
+            <input type="text" id="pnr" required>
+        </div>
+        <div class="input-field">
+            <label>👥 GROUP SIZE</label>
+            <input type="number" id="groupSize" min="1" value="1">
+        </div>
+        <div class="input-field">
+            <label>🛫 SECTOR</label>
+            <input type="text" id="sector" value="JED-DXB">
+        </div>
+        <div class="input-field">
+            <label>📅 OB DATE</label>
+            <input type="date" id="obDate" value="2025-05-10">
+        </div>
+        <div class="input-field">
+            <label>📅 IB DATE</label>
+            <input type="date" id="ibDate" value="2025-05-20">
+        </div>
+        <div class="input-field">
+            <label>🔖 GROUP CODE</label>
+            <input type="text" id="groupCode" value="G24JED">
+        </div>
+        <div class="input-field">
+            <label>💰 BASIC FARE</label>
+            <input type="number" id="basicFare" value="1200" step="0.01">
+        </div>
+        <div class="input-field">
+            <label>🧾 TAXES</label>
+            <input type="number" id="taxes" value="85.50" step="0.01">
+        </div>
+        <div class="input-field">
+            <label>💵 NET PRICE</label>
+            <input type="text" id="netPrice" readonly>
+        </div>
+        <div class="input-field">
+            <label>📊 %AGE</label>
+            <input type="number" id="percentage" value="5" step="0.1">
+        </div>
+        
+        <!-- REMOVED credit card icon from payment preview -->
+        <div class="payment-preview">
+            <span style="font-size:1.2rem;">PAYMENT :</span>
+            <span class="payment-amount" id="paymentDisplay">0.00</span>
+        </div>
+
+        <div class="input-field">
+            <label>📆 DATE</label>
+            <input type="date" id="formDate" value="2025-04-01">
+        </div>
+        <div class="input-field">
+            <label>⏳ TIMELIMIT</label>
+            <input type="text" id="timeLimit" value="2025-04-03 23:59">
+        </div>
+        <div class="input-field">
+            <label>🧑‍💼 SALES PERSON</label>
+            <select id="salesPerson">
+                <option value="Mr. Muhammad Rafaqat">Mr. Muhammad Rafaqat</option>
+                <option value="Mr. Asad Sharif">Mr. Asad Sharif</option>
+                <option value="Mr. Usman Mughal">Mr. Usman Mughal</option>
+                <option value="Mr. Malik Waqar Awan">Mr. Malik Waqar Awan</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn" id="saveEntryBtn">💾 SAVE ENTRY</button>
+        <button class="btn btn-outline" id="printSelectedBtn">🖨️ PRINT SELECTED</button>
+        <button class="btn btn-outline" id="clearFormBtn">🗑️ CLEAR FORM</button>
+    </div>
+
+    <!-- STORED ENTRIES TABLE WITH CHECKBOXES, EDIT, AND DELETE -->
+    <div class="entries-list">
+        <div class="entries-header">
+            <h3>📋 Stored itineraries</h3>
+            <span id="entryCount" class="storage-badge">0 entries</span>
+        </div>
+        
+        <!-- Selection controls -->
+        <div class="selection-bar">
+            <span style="font-weight: 600; color: #1e476b;">✅ SELECT ITEMS TO PRINT:</span>
+            <button id="selectAllBtn" class="select-all-btn">✔️ Select All</button>
+            <button id="deselectAllBtn" class="select-all-btn" style="background: #6c8a9e;">✖️ Deselect All</button>
+            <span id="selectedCount" style="font-weight: 600; margin-left: auto; background: white; padding: 5px 15px; border-radius: 30px;">0 selected</span>
+        </div>
+        
+        <div style="overflow-x: auto;">
+            <table id="entriesTable">
+                <thead>
+                    <tr>
+                        <th style="width: 25px;">✓</th>
+                        <th>Sr</th>
+                        <th>Branch</th> <!-- NEW BRANCH COLUMN -->
+                        <th>Air</th>
+                        <th>PNR</th>
+                        <th>Size</th>
+                        <th>Sector</th>
+                        <th>OB</th>
+                        <th>IB</th>
+                        <th>Code</th>
+                        <th>Fare</th>
+                        <th>Tax</th>
+                        <th>Net</th>
+                        <th>%</th>
+                        <th>Payment</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Sales</th>
+                        <th>Created/Edited By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        "use strict";
+
+        // ========== STORAGE ==========
+        let storedEntries = [];
+
+        // ========== DOM ELEMENTS ==========
+        const srNoField = document.getElementById('srNo');
+        const branchSelect = document.getElementById('branch'); // NEW - Branch select
+        const airlineSelect = document.getElementById('airline');
+        const pnrInput = document.getElementById('pnr');
+        const groupSizeInput = document.getElementById('groupSize');
+        const sectorInput = document.getElementById('sector');
+        const obDateInput = document.getElementById('obDate');
+        const ibDateInput = document.getElementById('ibDate');
+        const groupCodeInput = document.getElementById('groupCode');
+        const basicFareInput = document.getElementById('basicFare');
+        const taxesInput = document.getElementById('taxes');
+        const netPriceField = document.getElementById('netPrice');
+        const percentageInput = document.getElementById('percentage');
+        const paymentDisplay = document.getElementById('paymentDisplay');
+        const formDateInput = document.getElementById('formDate');
+        const timeLimitInput = document.getElementById('timeLimit');
+        const salesPersonSelect = document.getElementById('salesPerson');
+        const tableBody = document.getElementById('tableBody');
+        const entryCountSpan = document.getElementById('entryCount');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        const currentUserNameSpan = document.getElementById('currentUserName');
+
+        // ========== SESSION USER (who is creating/editing) ==========
+        // Generate a consistent anonymous user ID for this session
+        let sessionUserId = localStorage.getItem('qfc_session_user');
+        if (!sessionUserId) {
+            const randomNum = Math.floor(Math.random() * 1000);
+            sessionUserId = `User-${randomNum}`;
+            localStorage.setItem('qfc_session_user', sessionUserId);
+        }
+        currentUserNameSpan.textContent = sessionUserId;
+
+        // ========== EDIT TRACKING ==========
+        let editingIndex = null;
+
+        // ========== CALCULATIONS ==========
+        function calculateNetPrice() {
+            const basic = parseFloat(basicFareInput.value) || 0;
+            const tax = parseFloat(taxesInput.value) || 0;
+            netPriceField.value = (basic + tax).toFixed(2);
+            return basic + tax;
+        }
+
+        function computePayment() {
+            const basic = parseFloat(basicFareInput.value) || 0;
+            const percent = parseFloat(percentageInput.value) || 0;
+            const group = parseInt(groupSizeInput.value, 10) || 1;
+            return basic * (percent / 100) * group;
+        }
+
+        function updatePaymentPreview() {
+            paymentDisplay.textContent = computePayment().toFixed(2);
+        }
+
+        function refreshCalculations() {
+            calculateNetPrice();
+            updatePaymentPreview();
+        }
+
+        basicFareInput.addEventListener('input', refreshCalculations);
+        taxesInput.addEventListener('input', refreshCalculations);
+        percentageInput.addEventListener('input', refreshCalculations);
+        groupSizeInput.addEventListener('input', refreshCalculations);
+        refreshCalculations();
+
+        // ========== SR NO ==========
+        function getNextSrNo() {
+            if (storedEntries.length === 0) return 1;
+            return Math.max(...storedEntries.map(e => e.srNo)) + 1;
+        }
+
+        function updateSrNoField() {
+            srNoField.value = getNextSrNo();
+        }
+
+        // ========== LOCALSTORAGE FUNCTIONS ==========
+        function loadFromStorage() {
+            const saved = localStorage.getItem('airlineEntries');
+            
+            if (saved) {
+                try {
+                    storedEntries = JSON.parse(saved);
+                    console.log(`✅ Loaded ${storedEntries.length} entries from localStorage`);
+                } catch(e) {
+                    console.error('Failed to parse localStorage data', e);
+                    storedEntries = [];
+                }
+            } 
+            
+            // If no data or empty array, create demo entry with audit info
+            if (!storedEntries || storedEntries.length === 0) {
+                storedEntries = [{
+                    srNo: 1,
+                    branch: 'HO', // NEW - Branch field in demo
+                    airline: 'EK',
+                    pnr: 'X7YZ9P',
+                    groupSize: 5,
+                    sector: 'DXB-LHR',
+                    obDate: '2025-06-12',
+                    ibDate: '2025-06-26',
+                    groupCode: 'G-EMI05',
+                    basicFare: 1450.00,
+                    taxes: 112.30,
+                    netPrice: 1562.30,
+                    percentage: 7.5,
+                    payment: 543.75,
+                    formDate: '2025-04-01',
+                    timeLimit: '2025-04-05 14:00',
+                    salesPerson: 'Mr. Asad Sharif',
+                    selected: false,
+                    createdBy: 'System',
+                    createdAt: new Date().toLocaleString(),
+                    editedBy: null,
+                    editedAt: null
+                }];
+                saveToStorage();
+                console.log('🆕 Created demo data with audit trail');
+            }
+            
+            renderTable();
+            updateSrNoField();
+            updateSelectedCount();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('airlineEntries', JSON.stringify(storedEntries));
+            console.log('💾 Saved to localStorage');
+        }
+
+        // ========== DELETE ENTRY ==========
+        window.deleteEntry = function(index) {
+            if (confirm('⚠️ Are you sure you want to delete this entry? This cannot be undone.')) {
+                const deletedSrNo = storedEntries[index].srNo;
+                storedEntries.splice(index, 1);
+                renderTable();
+                updateSrNoField();
+                saveToStorage();
+                alert(`Entry #${deletedSrNo} deleted.`);
+            }
+        };
+
+        // ========== SAVE ENTRY (with audit trail) ==========
+        function saveEntry() {
+            if (!pnrInput.value.trim()) { alert('PNR required'); return; }
+            if (!groupCodeInput.value.trim()) { alert('Group Code required'); return; }
+
+            const now = new Date().toLocaleString();
+            
+            // Base entry data
+            const entry = {
+                srNo: editingIndex !== null ? storedEntries[editingIndex].srNo : getNextSrNo(),
+                branch: branchSelect.value, // NEW - Save branch
+                airline: airlineSelect.value,
+                pnr: pnrInput.value.trim(),
+                groupSize: parseInt(groupSizeInput.value, 10) || 0,
+                sector: sectorInput.value.trim() || '—',
+                obDate: obDateInput.value,
+                ibDate: ibDateInput.value,
+                groupCode: groupCodeInput.value.trim(),
+                basicFare: parseFloat(basicFareInput.value) || 0,
+                taxes: parseFloat(taxesInput.value) || 0,
+                netPrice: parseFloat(netPriceField.value) || 0,
+                percentage: parseFloat(percentageInput.value) || 0,
+                payment: computePayment(),
+                formDate: formDateInput.value,
+                timeLimit: timeLimitInput.value.trim() || '—',
+                salesPerson: salesPersonSelect.value,
+                selected: false
+            };
+
+            if (editingIndex !== null) {
+                // ========== EDIT EXISTING ==========
+                // Preserve creation info, add edit info
+                entry.createdBy = storedEntries[editingIndex].createdBy;
+                entry.createdAt = storedEntries[editingIndex].createdAt;
+                entry.editedBy = sessionUserId;
+                entry.editedAt = now;
+                
+                storedEntries[editingIndex] = entry;
+                alert(`Entry #${entry.srNo} updated by ${sessionUserId}.`);
+                editingIndex = null;
+            } else {
+                // ========== NEW ENTRY ==========
+                entry.createdBy = sessionUserId;
+                entry.createdAt = now;
+                entry.editedBy = null;
+                entry.editedAt = null;
+                
+                storedEntries.push(entry);
+                alert(`Entry #${entry.srNo} created by ${sessionUserId}.`);
+            }
+            
+            renderTable();
+            updateSrNoField();
+            saveToStorage();
+            
+            // Clear form fields (keep branch and airline defaults)
+            pnrInput.value = '';
+            groupCodeInput.value = '';
+            sectorInput.value = 'JED-DXB';
+            refreshCalculations();
+        }
+
+        // ========== EDIT FUNCTION ==========
+        window.editEntry = function(index) {
+            const e = storedEntries[index];
+            if (!e) return;
+            
+            // Load branch value - NEW
+            if (e.branch) {
+                branchSelect.value = e.branch;
+            }
+            
+            airlineSelect.value = e.airline;
+            pnrInput.value = e.pnr;
+            groupSizeInput.value = e.groupSize;
+            sectorInput.value = e.sector;
+            obDateInput.value = e.obDate;
+            ibDateInput.value = e.ibDate;
+            groupCodeInput.value = e.groupCode;
+            basicFareInput.value = e.basicFare;
+            taxesInput.value = e.taxes;
+            percentageInput.value = e.percentage;
+            formDateInput.value = e.formDate;
+            timeLimitInput.value = e.timeLimit;
+            salesPersonSelect.value = e.salesPerson;
+            refreshCalculations();
+            editingIndex = index;
+        };
+
+        // ========== CHECKBOX HANDLERS ==========
+        window.toggleSelect = function(index) {
+            storedEntries[index].selected = !storedEntries[index].selected;
+            renderTable();
+            updateSelectedCount();
+            saveToStorage();
+        };
+
+        function selectAll() {
+            storedEntries.forEach(e => e.selected = true);
+            renderTable();
+            updateSelectedCount();
+            saveToStorage();
+        }
+
+        function deselectAll() {
+            storedEntries.forEach(e => e.selected = false);
+            renderTable();
+            updateSelectedCount();
+            saveToStorage();
+        }
+
+        function updateSelectedCount() {
+            const count = storedEntries.filter(e => e.selected).length;
+            if (selectedCountSpan) selectedCountSpan.textContent = `${count} selected`;
+        }
+
+        // ========== RENDER TABLE with AUDIT and DELETE ==========
+        function renderTable() {
+            if (!tableBody) return;
+            let html = '';
+            storedEntries.forEach((e, idx) => {
+                const checked = e.selected ? 'checked' : '';
+                
+                // Format audit information
+                let auditText = `Created: ${e.createdBy || 'Unknown'}\n${e.createdAt || ''}`;
+                if (e.editedBy) {
+                    auditText += `\n✏️ Edited: ${e.editedBy}\n${e.editedAt}`;
+                }
+                
+                html += `<tr>
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="select-checkbox" ${checked} onclick="toggleSelect(${idx})">
+                    </td>
+                    <td>${e.srNo}</td>
+                    <td><strong>${e.branch || 'HO'}</strong></td> <!-- NEW - Display branch -->
+                    <td>${e.airline}</td>
+                    <td>${e.pnr}</td>
+                    <td>${e.groupSize}</td>
+                    <td>${e.sector}</td>
+                    <td>${e.obDate}</td>
+                    <td>${e.ibDate}</td>
+                    <td>${e.groupCode}</td>
+                    <td>${e.basicFare.toFixed(2)}</td>
+                    <td>${e.taxes.toFixed(2)}</td>
+                    <td>${e.netPrice.toFixed(2)}</td>
+                    <td>${e.percentage}%</td>
+                    <td>${e.payment.toFixed(2)}</td>
+                    <td>${e.formDate}</td>
+                    <td>${e.timeLimit}</td>
+                    <td>${e.salesPerson}</td>
+                    <td class="audit-cell" title="${auditText.replace(/\n/g, ' • ')}">
+                        ${e.editedBy ? '✏️ ' : '➕ '}${e.editedBy || e.createdBy || '—'}<br>
+                        <span style="font-size: 0.65rem; color: #6c8a9e;">${e.editedAt ? 'Updated' : 'Created'}: ${(e.editedAt || e.createdAt || '').slice(0,10)}</span>
+                    </td>
+                    <td>
+                        <button class="edit-btn" onclick="editEntry(${idx})">✏️ Edit</button>
+                        <button class="btn-delete" onclick="deleteEntry(${idx})">🗑️ Del</button>
+                    </td>
+                </tr>`;
+            });
+            tableBody.innerHTML = html;
+            if (entryCountSpan) entryCountSpan.textContent = `${storedEntries.length} entries`;
+        }
+
+        // ========== CLEAR FORM (inputs only) ==========
+        function clearForm() {
+            pnrInput.value = '';
+            groupSizeInput.value = '1';
+            sectorInput.value = 'JED-DXB';
+            obDateInput.value = '2025-05-10';
+            ibDateInput.value = '2025-05-20';
+            groupCodeInput.value = '';
+            basicFareInput.value = '1200';
+            taxesInput.value = '85.50';
+            percentageInput.value = '5';
+            formDateInput.value = '2025-04-01';
+            timeLimitInput.value = '2025-04-03 23:59';
+            airlineSelect.value = 'SV';
+            branchSelect.value = 'HO'; // NEW - Reset branch to default
+            salesPersonSelect.value = 'Mr. Muhammad Rafaqat';
+            refreshCalculations();
+            updateSrNoField();
+            editingIndex = null;
+        }
+
+        // ========== PRINT SELECTED ITINERARIES ==========
+        function printSelected() {
+            const selectedEntries = storedEntries.filter(e => e.selected);
+            
+            if (selectedEntries.length === 0) {
+                alert('Please select at least one itinerary to print.');
+                return;
+            }
+
+            const latestSelected = selectedEntries[selectedEntries.length - 1];
+            const initiateName = latestSelected ? latestSelected.salesPerson : '____________________';
+
+            let tableRows = '';
+            selectedEntries.forEach(e => {
+                tableRows += `<tr style="border-bottom: 1px solid #ccc;">
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.srNo}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.branch || 'HO'}</td> <!-- NEW - Branch in print -->
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.airline}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.pnr}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.groupSize}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.sector}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.obDate}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.ibDate}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.groupCode}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.basicFare.toFixed(2)}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.taxes.toFixed(2)}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.netPrice.toFixed(2)}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.percentage}%</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.payment.toFixed(2)}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.formDate}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.timeLimit}</td>
+                    <td style="padding: 5px 3px; text-align: center; font-size: 10px;">${e.salesPerson}</td>
+                </tr>`;
+            });
+
+            const printHTML = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Airline Approval - Selected Itineraries</title>
+    <link rel="icon" type="image/png" href="QFClogo.png">
+    <style>
+        @page { size: landscape; margin: 0.5in; }
+        * { font-family: Arial, sans-serif; }
+        body { padding: 20px; margin: 0; background: white; }
+        .logo-header { display: flex; align-items: center; gap: 15px; border-bottom: 4px solid #ff8c42; padding-bottom: 10px; }
+        h1 { color: #0b2f4e; margin: 0; font-size: 24px; }
+        table { width: 100%; border-collapse: collapse; font-size: 9px; }
+        th { background: #213b4f; color: white; padding: 6px 3px; white-space: nowrap; }
+        td { padding: 5px 3px; border-bottom: 1px solid #ddd; text-align: center; }
+        .signature-panel { display: flex; justify-content: space-between; margin-top: 40px; background: #f9f5ec; padding: 25px 30px; border-radius: 20px; flex-wrap: wrap; }
+        .signature-name { font-size: 18px; font-weight: 700; border-bottom: 2px solid #c49a6c; }
+        @media print { th { background: #213b4f !important; color: white !important; } }
+    </style>
+</head>
+<body>
+    <div class="logo-header">
+        <img src="QFClogo.png" width="50" height="50" onerror="this.style.display='none'">
+        <h1>✈️ GROUP SEATS APPROVAL · SELECTED</h1>
+    </div>
+    <div style="background: #ebf2fa; padding: 15px; border-radius: 10px; margin: 15px 0;">
+        <h3 style="margin-top:0;">📋 SELECTED ITINERARIES (${selectedEntries.length})</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr</th>
+                        <th>Branch</th>
+                        <th>Air</th>
+                        <th>PNR</th>
+                        <th>Size</th>
+                        <th>Sector</th>
+                        <th>OB</th>
+                        <th>IB</th>
+                        <th>Code</th>
+                        <th>Fare</th>
+                        <th>Tax</th>
+                        <th>Net</th>
+                        <th>%</th>
+                        <th>Payment</th>
+                        <th>Date</th>
+                        <th>TimeLim</th>
+                        <th>Sales</th>
+                    </tr>
+                </thead>
+                <tbody>${tableRows}</tbody>
+            </table>
+        </div>
+    </div>
+    <div class="signature-panel">
+        <div><div style="font-size:10px; color:#566b78;">Initiate by</div><div class="signature-name">${initiateName}</div><div style="font-size:11px;">Originator</div></div>
+        <div><div style="font-size:10px; color:#566b78;">Review By</div><div class="signature-name">Mr. Muhammad Rafaqat</div><div style="font-size:11px;">CCO</div></div>
+        <div><div style="font-size:10px; color:#566b78;">Approved by</div><div class="signature-name">Mr. Muhammad Tariq</div><div style="font-size:11px;">COO</div></div>
+        <div><div style="font-size:10px; color:#566b78;">Approved by</div><div class="signature-name">Mr. Mudassir Hussain Malik</div><div style="font-size:11px;">CEO</div></div>
+    </div>
+    <div style="margin-top: 30px; text-align: right; color: #2f5d7a;">✅ Generated: ${new Date().toLocaleString()}</div>
+</body>
+</html>`;
+
+            const printWindow = window.open('', '_blank', 'width=1300,height=900');
+            if (!printWindow) { alert('Please allow pop-ups to print.'); return; }
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+            printWindow.onload = function() { 
+                printWindow.print();
+                printWindow.onafterprint = function() { printWindow.close(); };
+            };
+        }
+
+        // ========== EVENT LISTENERS ==========
+        document.getElementById('saveEntryBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            saveEntry();
+        });
+
+        document.getElementById('printSelectedBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            printSelected();
+        });
+
+        document.getElementById('clearFormBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            clearForm();
+        });
+
+        document.getElementById('selectAllBtn').addEventListener('click', selectAll);
+        document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
+
+        // ========== INITIALIZE ==========
+        loadFromStorage();
+        updateSrNoField();
+    })();
+</script>
+
+<!-- Favicon fallback if image not found -->
+<link rel="icon" type="image/png" href="QFClogo.png">
+</body>
+</html>
